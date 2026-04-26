@@ -225,15 +225,20 @@ table {
 
 th {
     text-align: left;
-    padding: 1rem;
+    padding: 0.75rem 0.5rem;
     color: var(--text-muted);
     font-weight: 400;
     border-bottom: 1px solid var(--border);
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
 }
 
 td {
-    padding: 1.25rem 1rem;
+    padding: 0.75rem 0.5rem;
     border-bottom: 1px solid var(--border);
+    font-size: 0.8rem;
+    white-space: nowrap;
 }
 
 .badge {

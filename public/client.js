@@ -79,14 +79,19 @@ async function loadData() {
                 
                 row.innerHTML = `
                     <td>${dataFormatada}</td>
-                    <td>${record.cidade}/${record.estado}</td>
+                    <td>${record.estado}</td>
+                    <td>${record.cidade}</td>
+                    <td>${record.armario}</td>
+                    <td>${record.splitter}</td>
                     <td>
-                        ${record.nome_ci}
-                        ${isRepeated ? '<span class="badge sla-late" style="margin-left:8px; font-size:0.6rem;">REPETIDA</span>' : ''}
+                        <span style="font-weight:600; color:var(--primary);">${record.nome_ci}</span>
+                        ${isRepeated ? '<br><span class="badge sla-late" style="font-size:0.5rem; padding:2px 6px;">REPETIDA</span>' : ''}
                     </td>
                     <td>${record.categoria}</td>
+                    <td>${record.subcategoria}</td>
+                    <td>${record.sintoma}</td>
+                    <td>${record.causa}</td>
                     <td><span class="badge ${record.cumplimento_sla === 'Dentro' ? 'sla-ok' : 'sla-late'}">${record.cumplimento_sla}</span></td>
-                    <td><span class="badge ${record.is_rework ? 'rework' : 'normal'}">${record.is_rework ? 'Sim' : 'Não'}</span></td>
                 `;
                 tableBody.appendChild(row);
             });
