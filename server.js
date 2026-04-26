@@ -149,7 +149,15 @@ app.post('/batch-insert', async (req, res) => {
       };
     });
 
-    const validRecords = mappedRecords.filter(r => r.nome_ci && r.nome_ci.trim() !== '');
+    const validRecords = mappedRecords.filter(r => r.nome_ci && String(r.nome_ci).trim() !== '');
+
+    if (validRecords.length === 0 && records.length > 0) {
+      const foundHeaders = Object.keys(records[0]).join(', ');
+      return res.status(400).json({ 
+        status: 'error', 
+        message: `Nenhum registro válido encontrado. Verifique se a coluna 'Nome do CI' existe. Colunas encontradas no arquivo: [${foundHeaders}]` 
+      });
+    }
 
     const { data, error } = await supabase
       .from('manutencoes_campo')
