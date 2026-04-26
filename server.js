@@ -108,9 +108,12 @@ app.post('/batch-insert', async (req, res) => {
     const mappedRecords = records.map(record => {
       // Helper function to find value by flexible key name
       const getVal = (possibleNames) => {
-        const key = Object.keys(record).find(k => 
-          possibleNames.some(name => k.toLowerCase().trim() === name.toLowerCase().trim())
-        );
+        const key = Object.keys(record).find(k => {
+          const normalizedK = k.toLowerCase().replace(/\s+/g, ' ').trim();
+          return possibleNames.some(name => 
+            normalizedK === name.toLowerCase().replace(/\s+/g, ' ').trim()
+          );
+        });
         return key ? record[key] : '';
       };
 
@@ -120,7 +123,7 @@ app.post('/batch-insert', async (req, res) => {
       const estado = getVal(['Estado', 'State', 'UF']);
       const cidade = getVal(['Cidade', 'City', 'Município']);
       const categoria = getVal(['Categoria', 'Category']);
-      const subcategoria = getVal(['Subcategoria', 'Subcategory']);
+      const subcategoria = getVal(['Subcategoria', 'Subcategory', 'Sub-Categoria']);
       const sintoma = getVal(['Sintoma', 'Symptom']);
       const causa = getVal(['Causa', 'Cause']);
       const sla = getVal(['Cumprimento SLA', 'SLA', 'Status SLA']);
