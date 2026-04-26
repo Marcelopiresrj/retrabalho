@@ -159,8 +159,12 @@ body {
     margin-bottom: 2rem;
 }
 
-.btn-primary {
-    background: var(--primary);
+.actions {
+    display: flex;
+    gap: 1rem;
+}
+
+.btn-primary, .btn-secondary {
     color: white;
     border: none;
     padding: 0.75rem 1.5rem;
@@ -173,9 +177,23 @@ body {
     transition: all 0.3s ease;
 }
 
+.btn-primary {
+    background: var(--primary);
+}
+
 .btn-primary:hover {
     background: var(--primary-hover);
     box-shadow: 0 0 20px rgba(99, 102, 241, 0.3);
+}
+
+.btn-secondary {
+    background: rgba(148, 163, 184, 0.1);
+    border: 1px solid var(--border);
+    color: var(--text-main);
+}
+
+.btn-secondary:hover {
+    background: rgba(148, 163, 184, 0.2);
 }
 
 .table-container {

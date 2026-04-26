@@ -45,4 +45,56 @@ async function loadData() {
 }
 
 // Load data on page load
-document.addEventListener('DOMContentLoaded', loadData);
+document.addEventListener('DOMContentLoaded', () => {
+    loadData();
+    
+    // Excel Import Listener
+    const excelInput = document.getElementById('excel-input');
+    excelInput.addEventListener('change', handleExcelImport);
+});
+
+async function handleExcelImport(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = async (e) => {
+        const data = new Uint8Array(e.target.result);
+        const workbook = XLSX.read(data, { type: 'array' });
+        const firstSheetName = workbook.SheetNames[0];
+        const worksheet = workbook.Sheets[firstSheetName];
+        
+        // Convert to JSON
+        const jsonData = XLSX.utils.sheet_to_json(worksheet);
+        console.log('Parsed Excel:', jsonData);
+
+        if (jsonData.length === 0) {
+            alert('A planilha está vazia!');
+            return;
+        }
+
+        // Map fields and send to backend
+        try {
+            const response = await fetch('/batch-insert', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ records: jsonData })
+            });
+
+            const result = await response.json();
+            if (result.status === 'success') {
+                alert(`${result.count} registros importados com sucesso!`);
+                loadData();
+            } else {
+                alert('Erro na importação: ' + result.message);
+            }
+        } catch (error) {
+            console.error('Error uploading excel:', error);
+            alert('Erro ao enviar dados para o servidor.');
+        }
+    };
+    reader.readAsArrayBuffer(file);
+    
+    // Reset input
+    event.target.value = '';
+}

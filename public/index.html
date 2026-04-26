@@ -9,6 +9,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/lucide-static@0.321.0/lib/lucide.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 </head>
 <body>
     <div class="glass-bg"></div>
@@ -64,9 +65,15 @@
         <section class="content-section">
             <div class="section-header">
                 <h2>Manutenções Recentes</h2>
-                <button class="btn-primary" onclick="loadData()">
-                    <i data-lucide="refresh-cw"></i> Atualizar
-                </button>
+                <div class="actions">
+                    <input type="file" id="excel-input" accept=".xlsx, .xls" style="display: none;">
+                    <button class="btn-secondary" onclick="document.getElementById('excel-input').click()">
+                        <i data-lucide="upload"></i> Importar Excel
+                    </button>
+                    <button class="btn-primary" onclick="loadData()">
+                        <i data-lucide="refresh-cw"></i> Atualizar
+                    </button>
+                </div>
             </div>
             <div class="table-container">
                 <table id="records-table">
