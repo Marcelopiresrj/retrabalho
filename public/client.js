@@ -61,16 +61,24 @@ async function loadData() {
             // Analysis
             const cities = new Set();
             const ciCounts = {};
+            const splitterCounts = {};
+            
             currentData.forEach(r => {
-                ciCounts[r.nome_ci] = (ciCounts[r.nome_ci] || 0) + 1;
+                if (r.nome_ci) ciCounts[r.nome_ci] = (ciCounts[r.nome_ci] || 0) + 1;
+                if (r.splitter) splitterCounts[r.splitter] = (splitterCounts[r.splitter] || 0) + 1;
             });
 
-            const repeatedCount = Object.values(ciCounts).filter(count => count > 1).length;
-            document.getElementById('repeated-count').textContent = repeatedCount;
+            // Count unique items that are repeated
+            const repeatedCIs = Object.values(ciCounts).filter(count => count > 1).length;
+            const repeatedSplitters = Object.values(splitterCounts).filter(count => count > 1).length;
+            
+            document.getElementById('repeated-count').textContent = repeatedCIs + repeatedSplitters;
 
             currentData.forEach(record => {
                 cities.add(record.cidade);
-                const isRepeated = ciCounts[record.nome_ci] > 1;
+                const isRepeatedCI = record.nome_ci && ciCounts[record.nome_ci] > 1;
+                const isRepeatedSplitter = record.splitter && splitterCounts[record.splitter] > 1;
+                const isRepeated = isRepeatedCI || isRepeatedSplitter;
                 
                 const row = document.createElement('tr');
                 if (isRepeated) row.style.background = 'rgba(239, 68, 68, 0.05)';
