@@ -63,15 +63,25 @@ async function loadData() {
             const ciCityCounts = {};
             const splitterCityCounts = {};
             
+            const ignoreTerms = ['massiva', 'massivo', 'avulsa', 'n/a', 'não informado', 'nao informado', '-', 'null', 'undefined'];
+            
             currentData.forEach(r => {
                 if (r.cidade) {
+                    const city = r.cidade.toLowerCase().trim();
+                    
                     if (r.nome_ci) {
-                        const key = `${r.cidade.toLowerCase()}|${r.nome_ci.toLowerCase()}`;
-                        ciCityCounts[key] = (ciCityCounts[key] || 0) + 1;
+                        const ci = r.nome_ci.toLowerCase().trim();
+                        if (!ignoreTerms.includes(ci)) {
+                            const key = `${city}|${ci}`;
+                            ciCityCounts[key] = (ciCityCounts[key] || 0) + 1;
+                        }
                     }
                     if (r.splitter) {
-                        const key = `${r.cidade.toLowerCase()}|${r.splitter.toLowerCase()}`;
-                        splitterCityCounts[key] = (splitterCityCounts[key] || 0) + 1;
+                        const splitter = r.splitter.toLowerCase().trim();
+                        if (!ignoreTerms.includes(splitter)) {
+                            const key = `${city}|${splitter}`;
+                            splitterCityCounts[key] = (splitterCityCounts[key] || 0) + 1;
+                        }
                     }
                 }
             });
@@ -85,9 +95,12 @@ async function loadData() {
             currentData.forEach(record => {
                 cities.add(record.cidade);
                 
-                const cityKey = record.cidade ? record.cidade.toLowerCase() : '';
-                const isRepeatedCI = record.nome_ci && ciCityCounts[`${cityKey}|${record.nome_ci.toLowerCase()}`] > 1;
-                const isRepeatedSplitter = record.splitter && splitterCityCounts[`${cityKey}|${record.splitter.toLowerCase()}`] > 1;
+                const cityKey = record.cidade ? record.cidade.toLowerCase().trim() : '';
+                const ciVal = record.nome_ci ? record.nome_ci.toLowerCase().trim() : '';
+                const spVal = record.splitter ? record.splitter.toLowerCase().trim() : '';
+
+                const isRepeatedCI = ciVal && !ignoreTerms.includes(ciVal) && ciCityCounts[`${cityKey}|${ciVal}`] > 1;
+                const isRepeatedSplitter = spVal && !ignoreTerms.includes(spVal) && splitterCityCounts[`${cityKey}|${spVal}`] > 1;
                 const isRepeated = isRepeatedCI || isRepeatedSplitter;
                 
                 const row = document.createElement('tr');
