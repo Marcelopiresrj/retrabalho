@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema Repedidas | Manutenção de Campo</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/lucide-static@0.321.0/lib/lucide.min.js"></script>
+</head>
+<body>
+    <div class="glass-bg"></div>
+    
+    <nav class="navbar">
+        <div class="logo">
+            <i data-lucide="activity"></i>
+            <span>Sistema <strong>Repedidas</strong></span>
+        </div>
+        <div class="nav-links">
+            <a href="#" class="active">Dashboard</a>
+            <a href="#">Relatórios</a>
+            <a href="#">Configurações</a>
+        </div>
+    </nav>
+
+    <main class="container">
+        <header class="header">
+            <h1>Dashboard de Manutenção</h1>
+            <p>Monitoramento em tempo real das manutenções de campo.</p>
+        </header>
+
+        <section class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon purple">
+                    <i data-lucide="clipboard-list"></i>
+                </div>
+                <div class="stat-info">
+                    <h3>Total de Manutenções</h3>
+                    <p id="total-count">...</p>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon green">
+                    <i data-lucide="check-circle"></i>
+                </div>
+                <div class="stat-info">
+                    <h3>SLA Cumprido</h3>
+                    <p id="sla-count">...</p>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon blue">
+                    <i data-lucide="map-pin"></i>
+                </div>
+                <div class="stat-info">
+                    <h3>Cidades Atendidas</h3>
+                    <p id="city-count">...</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="content-section">
+            <div class="section-header">
+                <h2>Manutenções Recentes</h2>
+                <button class="btn-primary" onclick="loadData()">
+                    <i data-lucide="refresh-cw"></i> Atualizar
+                </button>
+            </div>
+            <div class="table-container">
+                <table id="records-table">
+                    <thead>
+                        <tr>
+                            <th>Data</th>
+                            <th>Cidade/Estado</th>
+                            <th>CI</th>
+                            <th>Categoria</th>
+                            <th>Status SLA</th>
+                            <th>Rework</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Data will be injected here -->
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+
+    <script src="client.js"></script>
+    <script>
+        lucide.createIcons();
+    </script>
+</body>
+</html>
