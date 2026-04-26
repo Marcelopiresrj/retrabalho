@@ -115,9 +115,22 @@ async function handleExcelImport(event) {
         const firstSheetName = workbook.SheetNames[0];
         const worksheet = workbook.Sheets[firstSheetName];
         
-        // Convert to JSON
-        const jsonData = XLSX.utils.sheet_to_json(worksheet);
-        console.log('Parsed Excel:', jsonData);
+        // Get all rows as array of arrays to find header
+        const rows = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+        
+        // Find the index of the first row that looks like a header
+        let headerIndex = rows.findIndex(row => 
+            row.some(cell => cell && String(cell).toLowerCase().includes('ci')) ||
+            row.some(cell => cell && String(cell).toLowerCase().includes('estado'))
+        );
+
+        if (headerIndex === -1) headerIndex = 0; // Fallback
+
+        // Convert to JSON starting from that row
+        const jsonData = XLSX.utils.sheet_to_json(worksheet, { range: headerIndex });
+
+        console.log('Detected Header Row at index:', headerIndex);
+        console.log('Sample data:', jsonData[0]);
 
         if (jsonData.length === 0) {
             alert('A planilha está vazia!');
