@@ -84,6 +84,8 @@ async function loadData() {
         console.error('Error loading data:', error);
     }
 }
+
+async function handleExcelImport(event) {
     const file = event.target.files[0];
     if (!file) return;
 
