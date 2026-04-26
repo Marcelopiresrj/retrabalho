@@ -119,7 +119,8 @@ app.post('/batch-insert', async (req, res) => {
 
       const armario = getVal(['Armário', 'Armario', 'Cabinet']);
       const splitter = getVal(['Splitter (SP)', 'Splitter', 'SP']);
-      const nomeCi = getVal(['Nome do CI', 'Nome CI', 'CI', 'NCI', 'Referência', 'Referencia', 'Tag', 'ID']);
+      const nomeCi = getVal(['Nome do CI', 'Nome CI', 'CI', 'NCI', 'Tag', 'ID']);
+      const referencia = getVal(['Referência', 'Referencia', 'Chamado', 'Ticket']);
       const estado = getVal(['Estado', 'State', 'UF', 'Área Rede', 'Area Rede']);
       const cidade = getVal(['Cidade', 'City', 'Município']);
       const categoria = getVal(['Categoria', 'Category']);
@@ -142,6 +143,7 @@ app.post('/batch-insert', async (req, res) => {
         splitter: splitter,
         descricao: desc,
         nome_ci: nomeCi,
+        referencia: referencia,
         categoria: categoria,
         subcategoria: subcategoria,
         sintoma: sintoma,

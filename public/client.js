@@ -87,6 +87,7 @@ async function loadData() {
                 
                 row.innerHTML = `
                     <td>${dataFormatada}</td>
+                    <td><span style="font-family:monospace; font-size:0.75rem;">${record.referencia || '-'}</span></td>
                     <td>${record.estado}</td>
                     <td>${record.cidade}</td>
                     <td>${record.armario}</td>
