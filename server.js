@@ -106,29 +106,42 @@ app.post('/batch-insert', async (req, res) => {
     }
 
     const mappedRecords = records.map(record => {
-      const armario = record.Armário || record.Armario || record.armario || '';
-      const splitter = record.Splitter || record.splitter || '';
-      
+      // Normalizing column names from user's provided list
+      const estado = record['Estado'] || record['estado'] || '';
+      const cidade = record['Cidade'] || record['cidade'] || '';
+      const armario = record['Armário'] || record['Armario'] || record['armario'] || '';
+      const splitter = record['Splitter (SP)'] || record['Splitter'] || record['splitter'] || '';
+      const nomeCi = record['Nome do CI'] || record['Nome CI'] || record['CI'] || record['nome_ci'] || '';
+      const categoria = record['Categoria'] || record['categoria'] || '';
+      const subcategoria = record['Subcategoria'] || record['subcategoria'] || '';
+      const sintoma = record['Sintoma'] || record['sintoma'] || '';
+      const causa = record['Causa'] || record['causa'] || '';
+      const sla = record['Cumprimento SLA'] || record['SLA'] || record['cumplimento_sla'] || 'Dentro';
+      const dataManut = record['Data da Manutenção'] || record['Data'] || record['data_manutencao'] || new Date().toISOString().split('T')[0];
+      const desc = record['Descrição'] || record['descricao'] || `${armario}${armario && splitter ? ' , ' : ''}${splitter}`;
+
       return {
-        estado: record.Estado || record.estado || '',
-        cidade: record.Cidade || record.cidade || '',
+        estado: estado,
+        cidade: cidade,
         armario: armario,
         splitter: splitter,
-        descricao: record.Descrição || record.descricao || `${armario}${armario && splitter ? ' , ' : ''}${splitter}`,
-        nome_ci: record['Nome CI'] || record.CI || record.nome_ci || '',
-        categoria: record.Categoria || record.categoria || '',
-        subcategoria: record.Subcategoria || record.subcategoria || '',
-        sintoma: record.Sintoma || record.sintoma || '',
-        causa: record.Causa || record.causa || '',
-        cumplimento_sla: record.SLA || record.cumplimento_sla || record.cumprimento_sla || 'Dentro',
-        data_manutencao: record.Data || record.data_manutencao || new Date().toISOString().split('T')[0],
-        is_rework: record.Rework === 'Sim' || record.is_rework === true || record.is_rework === 'true'
+        descricao: desc,
+        nome_ci: nomeCi,
+        categoria: categoria,
+        subcategoria: subcategoria,
+        sintoma: sintoma,
+        causa: causa,
+        cumplimento_sla: sla,
+        data_manutencao: dataManut,
+        is_rework: record['Rework'] === 'Sim' || record['is_rework'] === true
       };
     });
 
+    const validRecords = mappedRecords.filter(r => r.nome_ci && r.nome_ci.trim() !== '');
+
     const { data, error } = await supabase
       .from('manutencoes_campo')
-      .insert(mappedRecords)
+      .insert(validRecords)
       .select();
 
     if (error) throw error;
