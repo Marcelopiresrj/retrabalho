@@ -106,19 +106,31 @@ app.post('/batch-insert', async (req, res) => {
     }
 
     const mappedRecords = records.map(record => {
-      // Normalizing column names from user's provided list
-      const estado = record['Estado'] || record['estado'] || '';
-      const cidade = record['Cidade'] || record['cidade'] || '';
-      const armario = record['Armário'] || record['Armario'] || record['armario'] || '';
-      const splitter = record['Splitter (SP)'] || record['Splitter'] || record['splitter'] || '';
-      const nomeCi = record['Nome do CI'] || record['Nome CI'] || record['CI'] || record['nome_ci'] || '';
-      const categoria = record['Categoria'] || record['categoria'] || '';
-      const subcategoria = record['Subcategoria'] || record['subcategoria'] || '';
-      const sintoma = record['Sintoma'] || record['sintoma'] || '';
-      const causa = record['Causa'] || record['causa'] || '';
-      const sla = record['Cumprimento SLA'] || record['SLA'] || record['cumplimento_sla'] || 'Dentro';
-      const dataManut = record['Data da Manutenção'] || record['Data'] || record['data_manutencao'] || new Date().toISOString().split('T')[0];
-      const desc = record['Descrição'] || record['descricao'] || `${armario}${armario && splitter ? ' , ' : ''}${splitter}`;
+      // Helper function to find value by flexible key name
+      const getVal = (possibleNames) => {
+        const key = Object.keys(record).find(k => 
+          possibleNames.some(name => k.toLowerCase().trim() === name.toLowerCase().trim())
+        );
+        return key ? record[key] : '';
+      };
+
+      const armario = getVal(['Armário', 'Armario', 'Cabinet']);
+      const splitter = getVal(['Splitter (SP)', 'Splitter', 'SP']);
+      const nomeCi = getVal(['Nome do CI', 'Nome CI', 'CI', 'NCI']);
+      const estado = getVal(['Estado', 'State', 'UF']);
+      const cidade = getVal(['Cidade', 'City', 'Município']);
+      const categoria = getVal(['Categoria', 'Category']);
+      const subcategoria = getVal(['Subcategoria', 'Subcategory']);
+      const sintoma = getVal(['Sintoma', 'Symptom']);
+      const causa = getVal(['Causa', 'Cause']);
+      const sla = getVal(['Cumprimento SLA', 'SLA', 'Status SLA']);
+      const dataManut = getVal(['Data da Manutenção', 'Data', 'Date', 'Data Manutencao']);
+      
+      // Calculate description if not present
+      let desc = getVal(['Descrição', 'Descricao', 'Description']);
+      if (!desc && (armario || splitter)) {
+        desc = `${armario}${armario && splitter ? ' , ' : ''}${splitter}`;
+      }
 
       return {
         estado: estado,
@@ -131,9 +143,9 @@ app.post('/batch-insert', async (req, res) => {
         subcategoria: subcategoria,
         sintoma: sintoma,
         causa: causa,
-        cumplimento_sla: sla,
-        data_manutencao: dataManut,
-        is_rework: record['Rework'] === 'Sim' || record['is_rework'] === true
+        cumplimento_sla: sla || 'Dentro',
+        data_manutencao: dataManut || new Date().toISOString().split('T')[0],
+        is_rework: getVal(['Rework', 'Retrabalho']) === 'Sim'
       };
     });
 
