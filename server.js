@@ -105,20 +105,26 @@ app.post('/batch-insert', async (req, res) => {
       return res.status(400).json({ status: 'error', message: 'Invalid records format' });
     }
 
-    const mappedRecords = records.map(record => ({
-      estado: record.Estado || record.estado || '',
-      cidade: record.Cidade || record.cidade || '',
-      armario: record.Armário || record.Armario || record.armario || '',
-      splitter: record.Splitter || record.splitter || '',
-      nome_ci: record['Nome CI'] || record.CI || record.nome_ci || '',
-      categoria: record.Categoria || record.categoria || '',
-      subcategoria: record.Subcategoria || record.subcategoria || '',
-      sintoma: record.Sintoma || record.sintoma || '',
-      causa: record.Causa || record.causa || '',
-      cumplimento_sla: record.SLA || record.cumplimento_sla || record.cumprimento_sla || 'Dentro',
-      data_manutencao: record.Data || record.data_manutencao || new Date().toISOString().split('T')[0],
-      is_rework: record.Rework === 'Sim' || record.is_rework === true || record.is_rework === 'true'
-    }));
+    const mappedRecords = records.map(record => {
+      const armario = record.Armário || record.Armario || record.armario || '';
+      const splitter = record.Splitter || record.splitter || '';
+      
+      return {
+        estado: record.Estado || record.estado || '',
+        cidade: record.Cidade || record.cidade || '',
+        armario: armario,
+        splitter: splitter,
+        descricao: record.Descrição || record.descricao || `${armario}${armario && splitter ? ' , ' : ''}${splitter}`,
+        nome_ci: record['Nome CI'] || record.CI || record.nome_ci || '',
+        categoria: record.Categoria || record.categoria || '',
+        subcategoria: record.Subcategoria || record.subcategoria || '',
+        sintoma: record.Sintoma || record.sintoma || '',
+        causa: record.Causa || record.causa || '',
+        cumplimento_sla: record.SLA || record.cumplimento_sla || record.cumprimento_sla || 'Dentro',
+        data_manutencao: record.Data || record.data_manutencao || new Date().toISOString().split('T')[0],
+        is_rework: record.Rework === 'Sim' || record.is_rework === true || record.is_rework === 'true'
+      };
+    });
 
     const { data, error } = await supabase
       .from('manutencoes_campo')

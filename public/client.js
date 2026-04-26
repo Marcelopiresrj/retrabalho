@@ -83,6 +83,7 @@ async function loadData() {
                     <td>${record.cidade}</td>
                     <td>${record.armario}</td>
                     <td>${record.splitter}</td>
+                    <td><span style="font-size:0.75rem; color:var(--text-muted);">${record.descricao || ''}</span></td>
                     <td>
                         <span style="font-weight:600; color:var(--primary);">${record.nome_ci}</span>
                         ${isRepeated ? '<br><span class="badge sla-late" style="font-size:0.5rem; padding:2px 6px;">REPETIDA</span>' : ''}
