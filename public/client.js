@@ -60,24 +60,34 @@ async function loadData() {
 
             // Analysis
             const cities = new Set();
-            const ciCounts = {};
-            const splitterCounts = {};
+            const ciCityCounts = {};
+            const splitterCityCounts = {};
             
             currentData.forEach(r => {
-                if (r.nome_ci) ciCounts[r.nome_ci] = (ciCounts[r.nome_ci] || 0) + 1;
-                if (r.splitter) splitterCounts[r.splitter] = (splitterCounts[r.splitter] || 0) + 1;
+                if (r.cidade) {
+                    if (r.nome_ci) {
+                        const key = `${r.cidade.toLowerCase()}|${r.nome_ci.toLowerCase()}`;
+                        ciCityCounts[key] = (ciCityCounts[key] || 0) + 1;
+                    }
+                    if (r.splitter) {
+                        const key = `${r.cidade.toLowerCase()}|${r.splitter.toLowerCase()}`;
+                        splitterCityCounts[key] = (splitterCityCounts[key] || 0) + 1;
+                    }
+                }
             });
 
-            // Count unique items that are repeated
-            const repeatedCIs = Object.values(ciCounts).filter(count => count > 1).length;
-            const repeatedSplitters = Object.values(splitterCounts).filter(count => count > 1).length;
+            // Count unique items that are repeated WITHIN THEIR CITIES
+            const repeatedCIs = Object.values(ciCityCounts).filter(count => count > 1).length;
+            const repeatedSplitters = Object.values(splitterCityCounts).filter(count => count > 1).length;
             
             document.getElementById('repeated-count').textContent = repeatedCIs + repeatedSplitters;
 
             currentData.forEach(record => {
                 cities.add(record.cidade);
-                const isRepeatedCI = record.nome_ci && ciCounts[record.nome_ci] > 1;
-                const isRepeatedSplitter = record.splitter && splitterCounts[record.splitter] > 1;
+                
+                const cityKey = record.cidade ? record.cidade.toLowerCase() : '';
+                const isRepeatedCI = record.nome_ci && ciCityCounts[`${cityKey}|${record.nome_ci.toLowerCase()}`] > 1;
+                const isRepeatedSplitter = record.splitter && splitterCityCounts[`${cityKey}|${record.splitter.toLowerCase()}`] > 1;
                 const isRepeated = isRepeatedCI || isRepeatedSplitter;
                 
                 const row = document.createElement('tr');
