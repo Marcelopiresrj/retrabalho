@@ -101,7 +101,14 @@ async function loadData() {
                     <td>${record.subcategoria}</td>
                     <td>${record.sintoma}</td>
                     <td>${record.causa}</td>
-                    <td><span class="badge ${record.cumplimento_sla === 'Dentro' ? 'sla-ok' : 'sla-late'}">${record.cumplimento_sla}</span></td>
+                    <td>
+                        <span class="badge ${
+                            ['dentro', 'ok', 'no prazo', 'sim', 'dentro do prazo'].includes(String(record.cumplimento_sla).toLowerCase().trim()) 
+                            ? 'sla-ok' : 'sla-late'
+                        }">
+                            ${record.cumplimento_sla}
+                        </span>
+                    </td>
                 `;
                 tableBody.appendChild(row);
             });
