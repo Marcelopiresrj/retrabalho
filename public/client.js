@@ -1,3 +1,43 @@
+// Global state for data
+let currentData = [];
+
+// Load data on page load
+document.addEventListener('DOMContentLoaded', () => {
+    loadData();
+    
+    // Excel Import Listener
+    const excelInput = document.getElementById('excel-input');
+    excelInput.addEventListener('change', handleExcelImport);
+
+    // Navigation Listener
+    document.querySelectorAll('.nav-item').forEach(item => {
+        item.addEventListener('click', (e) => {
+            e.preventDefault();
+            const viewName = item.getAttribute('data-view');
+            switchView(viewName);
+        });
+    });
+});
+
+function switchView(viewName) {
+    // Update Active Link
+    document.querySelectorAll('.nav-item').forEach(item => {
+        item.classList.remove('active');
+        if (item.getAttribute('data-view') === viewName) {
+            item.classList.add('active');
+        }
+    });
+
+    // Update Visible View
+    document.querySelectorAll('.view').forEach(view => {
+        view.style.display = 'none';
+    });
+    document.getElementById(`view-${viewName}`).style.display = 'block';
+    
+    // Refresh icons
+    lucide.createIcons();
+}
+
 async function loadData() {
     try {
         // Fetch stats
@@ -14,13 +54,14 @@ async function loadData() {
         const recordsData = await recordsRes.json();
 
         if (recordsData.status === 'success') {
+            currentData = recordsData.data; // Update global state
             const tableBody = document.querySelector('#records-table tbody');
             tableBody.innerHTML = '';
 
             // Unique cities count
             const cities = new Set();
             
-            recordsData.data.forEach(record => {
+            currentData.forEach(record => {
                 cities.add(record.cidade);
                 
                 const row = document.createElement('tr');
@@ -43,17 +84,6 @@ async function loadData() {
         console.error('Error loading data:', error);
     }
 }
-
-// Load data on page load
-document.addEventListener('DOMContentLoaded', () => {
-    loadData();
-    
-    // Excel Import Listener
-    const excelInput = document.getElementById('excel-input');
-    excelInput.addEventListener('change', handleExcelImport);
-});
-
-async function handleExcelImport(event) {
     const file = event.target.files[0];
     if (!file) return;
 
@@ -97,4 +127,44 @@ async function handleExcelImport(event) {
     
     // Reset input
     event.target.value = '';
+}
+
+function exportToExcel() {
+    if (currentData.length === 0) {
+        alert('Não há dados para exportar.');
+        return;
+    }
+
+    const worksheet = XLSX.utils.json_to_sheet(currentData);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Relatório");
+    XLSX.writeFile(workbook, `Relatorio_Manutencoes_${new Date().toISOString().split('T')[0]}.xlsx`);
+}
+
+async function clearDatabase() {
+    if (!confirm('VOCÊ TEM CERTEZA? Isso apagará TODOS os registros do banco de dados permanentemente.')) {
+        return;
+    }
+
+    const password = prompt('Digite a senha de segurança (admin) para confirmar:');
+    if (password !== 'admin') {
+        alert('Senha incorreta.');
+        return;
+    }
+
+    try {
+        const response = await fetch('/clear-database', { method: 'POST' });
+        const result = await response.json();
+        
+        if (result.status === 'success') {
+            alert('Banco de dados limpo com sucesso!');
+            loadData();
+            switchView('dashboard');
+        } else {
+            alert('Erro ao limpar banco: ' + result.message);
+        }
+    } catch (error) {
+        console.error('Error clearing database:', error);
+        alert('Erro de conexão.');
+    }
 }

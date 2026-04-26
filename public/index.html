@@ -20,79 +20,133 @@
             <span>Sistema <strong>Repedidas</strong></span>
         </div>
         <div class="nav-links">
-            <a href="#" class="active">Dashboard</a>
-            <a href="#">Relatórios</a>
-            <a href="#">Configurações</a>
+            <a href="#" class="nav-item active" data-view="dashboard">Dashboard</a>
+            <a href="#" class="nav-item" data-view="reports">Relatórios</a>
+            <a href="#" class="nav-item" data-view="settings">Configurações</a>
         </div>
     </nav>
 
     <main class="container">
-        <header class="header">
-            <h1>Dashboard de Manutenção</h1>
-            <p>Monitoramento em tempo real das manutenções de campo.</p>
-        </header>
+        <!-- Dashboard View -->
+        <div id="view-dashboard" class="view">
+            <header class="header">
+                <h1>Dashboard de Manutenção</h1>
+                <p>Monitoramento em tempo real das manutenções de campo.</p>
+            </header>
 
-        <section class="stats-grid">
-            <div class="stat-card">
-                <div class="stat-icon purple">
-                    <i data-lucide="clipboard-list"></i>
+            <section class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon purple">
+                        <i data-lucide="clipboard-list"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3>Total de Manutenções</h3>
+                        <p id="total-count">...</p>
+                    </div>
                 </div>
-                <div class="stat-info">
-                    <h3>Total de Manutenções</h3>
-                    <p id="total-count">...</p>
+                <div class="stat-card">
+                    <div class="stat-icon green">
+                        <i data-lucide="check-circle"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3>SLA Cumprido</h3>
+                        <p id="sla-count">...</p>
+                    </div>
                 </div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-icon green">
-                    <i data-lucide="check-circle"></i>
+                <div class="stat-card">
+                    <div class="stat-icon blue">
+                        <i data-lucide="map-pin"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3>Cidades Atendidas</h3>
+                        <p id="city-count">...</p>
+                    </div>
                 </div>
-                <div class="stat-info">
-                    <h3>SLA Cumprido</h3>
-                    <p id="sla-count">...</p>
-                </div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-icon blue">
-                    <i data-lucide="map-pin"></i>
-                </div>
-                <div class="stat-info">
-                    <h3>Cidades Atendidas</h3>
-                    <p id="city-count">...</p>
-                </div>
-            </div>
-        </section>
+            </section>
 
-        <section class="content-section">
-            <div class="section-header">
-                <h2>Manutenções Recentes</h2>
-                <div class="actions">
-                    <input type="file" id="excel-input" accept=".xlsx, .xls" style="display: none;">
-                    <button class="btn-secondary" onclick="document.getElementById('excel-input').click()">
-                        <i data-lucide="upload"></i> Importar Excel
-                    </button>
-                    <button class="btn-primary" onclick="loadData()">
-                        <i data-lucide="refresh-cw"></i> Atualizar
+            <section class="content-section">
+                <div class="section-header">
+                    <h2>Manutenções Recentes</h2>
+                    <div class="actions">
+                        <input type="file" id="excel-input" accept=".xlsx, .xls" style="display: none;">
+                        <button class="btn-secondary" onclick="document.getElementById('excel-input').click()">
+                            <i data-lucide="upload"></i> Importar Excel
+                        </button>
+                        <button class="btn-primary" onclick="loadData()">
+                            <i data-lucide="refresh-cw"></i> Atualizar
+                        </button>
+                    </div>
+                </div>
+                <div class="table-container">
+                    <table id="records-table">
+                        <thead>
+                            <tr>
+                                <th>Data</th>
+                                <th>Cidade/Estado</th>
+                                <th>CI</th>
+                                <th>Categoria</th>
+                                <th>Status SLA</th>
+                                <th>Rework</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Data will be injected here -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </div>
+
+        <!-- Reports View -->
+        <div id="view-reports" class="view" style="display: none;">
+            <header class="header">
+                <h1>Relatórios Detalhados</h1>
+                <p>Análise aprofundada dos dados de manutenção.</p>
+            </header>
+            
+            <section class="content-section">
+                <div class="section-header">
+                    <h2>Exportar Dados</h2>
+                    <button class="btn-primary" onclick="exportToExcel()">
+                        <i data-lucide="download"></i> Baixar Relatório (XLSX)
                     </button>
                 </div>
-            </div>
-            <div class="table-container">
-                <table id="records-table">
-                    <thead>
-                        <tr>
-                            <th>Data</th>
-                            <th>Cidade/Estado</th>
-                            <th>CI</th>
-                            <th>Categoria</th>
-                            <th>Status SLA</th>
-                            <th>Rework</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <!-- Data will be injected here -->
-                    </tbody>
-                </table>
-            </div>
-        </section>
+                <p style="color: var(--text-muted); margin-bottom: 20px;">Utilize esta seção para gerar arquivos consolidados de todas as manutenções registradas.</p>
+                <div id="reports-summary" class="stats-grid" style="grid-template-columns: 1fr 1fr; margin-top: 20px;">
+                    <!-- Charts or summary table could go here -->
+                </div>
+            </section>
+        </div>
+
+        <!-- Settings View -->
+        <div id="view-settings" class="view" style="display: none;">
+            <header class="header">
+                <h1>Configurações do Sistema</h1>
+                <p>Gerenciamento de integrações e preferências.</p>
+            </header>
+
+            <section class="content-section">
+                <div class="settings-group">
+                    <h2>Status da Conexão</h2>
+                    <div class="stat-card" style="margin-top: 20px;">
+                        <div class="stat-icon green">
+                            <i data-lucide="database"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3>Banco de Dados</h3>
+                            <p style="font-size: 1rem; color: var(--green);">Conectado ao Supabase</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="settings-group" style="margin-top: 40px;">
+                    <h2>Ações Avançadas</h2>
+                    <p style="color: var(--text-muted); margin-bottom: 20px;">Cuidado: estas ações podem ser irreversíveis.</p>
+                    <button class="btn-secondary" style="border-color: #ef4444; color: #ef4444;" onclick="clearDatabase()">
+                        <i data-lucide="trash-2"></i> Limpar Histórico (Reset)
+                    </button>
+                </div>
+            </section>
+        </div>
     </main>
 
     <script src="client.js"></script>

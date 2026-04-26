@@ -134,6 +134,25 @@ app.post('/batch-insert', async (req, res) => {
   }
 });
 
+// Endpoint to clear all records (Admin only functionality)
+app.post('/clear-database', async (req, res) => {
+  try {
+    // In a real production app, we would check for a session/admin token here.
+    // For this simple version, we rely on the frontend prompt as a basic guard.
+    const { error } = await supabase
+      .from('manutencoes_campo')
+      .delete()
+      .neq('id', '00000000-0000-0000-0000-000000000000'); // Delete all where id is not dummy
+
+    if (error) throw error;
+
+    res.json({ status: 'success', message: 'Database cleared' });
+  } catch (error) {
+    console.error('Clear database error:', error);
+    res.status(500).json({ status: 'error', message: error.message });
+  }
+});
+
 // Endpoint to get stats (dashboard data)
 app.get('/stats', async (req, res) => {
   try {
