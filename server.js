@@ -119,8 +119,8 @@ app.post('/batch-insert', async (req, res) => {
 
       const armario = getVal(['Armário', 'Armario', 'Cabinet']);
       const splitter = getVal(['Splitter (SP)', 'Splitter', 'SP']);
-      const nomeCi = getVal(['Nome do CI', 'Nome CI', 'CI', 'NCI']);
-      const estado = getVal(['Estado', 'State', 'UF']);
+      const nomeCi = getVal(['Nome do CI', 'Nome CI', 'CI', 'NCI', 'Referência', 'Referencia', 'Tag', 'ID']);
+      const estado = getVal(['Estado', 'State', 'UF', 'Área Rede', 'Area Rede']);
       const cidade = getVal(['Cidade', 'City', 'Município']);
       const categoria = getVal(['Categoria', 'Category']);
       const subcategoria = getVal(['Subcategoria', 'Subcategory', 'Sub-Categoria']);
