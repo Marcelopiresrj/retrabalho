@@ -54,23 +54,36 @@ async function loadData() {
         const recordsData = await recordsRes.json();
 
         if (recordsData.status === 'success') {
-            currentData = recordsData.data; // Update global state
+            currentData = recordsData.data;
             const tableBody = document.querySelector('#records-table tbody');
             tableBody.innerHTML = '';
 
-            // Unique cities count
+            // Analysis
             const cities = new Set();
-            
+            const ciCounts = {};
+            currentData.forEach(r => {
+                ciCounts[r.nome_ci] = (ciCounts[r.nome_ci] || 0) + 1;
+            });
+
+            const repeatedCount = Object.values(ciCounts).filter(count => count > 1).length;
+            document.getElementById('repeated-count').textContent = repeatedCount;
+
             currentData.forEach(record => {
                 cities.add(record.cidade);
+                const isRepeated = ciCounts[record.nome_ci] > 1;
                 
                 const row = document.createElement('tr');
+                if (isRepeated) row.style.background = 'rgba(239, 68, 68, 0.05)';
+                
                 const dataFormatada = new Date(record.data_manutencao).toLocaleDateString('pt-BR');
                 
                 row.innerHTML = `
                     <td>${dataFormatada}</td>
                     <td>${record.cidade}/${record.estado}</td>
-                    <td>${record.nome_ci}</td>
+                    <td>
+                        ${record.nome_ci}
+                        ${isRepeated ? '<span class="badge sla-late" style="margin-left:8px; font-size:0.6rem;">REPETIDA</span>' : ''}
+                    </td>
                     <td>${record.categoria}</td>
                     <td><span class="badge ${record.cumplimento_sla === 'Dentro' ? 'sla-ok' : 'sla-late'}">${record.cumplimento_sla}</span></td>
                     <td><span class="badge ${record.is_rework ? 'rework' : 'normal'}">${record.is_rework ? 'Sim' : 'Não'}</span></td>

@@ -149,6 +149,7 @@ body {
 .stat-icon.purple { background: rgba(168, 85, 247, 0.2); color: var(--purple); }
 .stat-icon.green { background: rgba(16, 185, 129, 0.2); color: var(--green); }
 .stat-icon.blue { background: rgba(59, 130, 246, 0.2); color: var(--blue); }
+.stat-icon.red { background: rgba(239, 68, 68, 0.2); color: #ef4444; }
 
 .stat-info h3 {
     font-size: 0.9rem;
